@@ -25,7 +25,6 @@
     local Cam = game.Workspace.Camera
     local Player = game.Players.LocalPlayer
     local Char = Player.Character
-    local Root = Char.HumanoidRootPart
 	_G.AMP = 20
     _G.Dist = 35
     _G.SphereActivated = true
@@ -118,7 +117,7 @@
     	function Update()
     		game.Players.LocalPlayer.Character.ChildAdded:Connect(function(tool)
     			if tool:FindFirstChild("Handle") then
-    				Part = Instance.new("Part", Root)
+    				Part = Instance.new("Part", Cam)
     				Weld = Instance.new("Weld", Cam)
                     Part.Material = Enum.Material.ForceField
                     Part.CastShadow = false
