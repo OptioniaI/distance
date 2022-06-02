@@ -1,10 +1,10 @@
-        if LEGENDSPVR_LOADED and not _G.LEGENDSPVR_DEBUG == true then
-             game.StarterGui:SetCore("SendNotification", {
-             Title = "Reach";
-             Text = "Already Loaded!";
-             Icon = "rbxasset://textures/loading/cancelButton.png";
-             Duration = 0.75;})
-       return
+    if LEGENDSPVR_LOADED and not _G.LEGENDSPVR_DEBUG == true then
+            game.StarterGui:SetCore("SendNotification", {
+            Title = "Reach";
+            Text = "Already Loaded!";
+            Icon = "rbxasset://textures/loading/cancelButton.png";
+            Duration = 0.75;})
+        return
     end
 
     pcall(function() getgenv().LEGENDSPVR_LOADED = true end)
