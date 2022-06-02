@@ -146,7 +146,7 @@
     	function UnEquip()
     		game.Players.LocalPlayer.Character.ChildRemoved:Connect(function(int)
     			if int:FindFirstChild("Handle") then
-    				for i,v in pairs(game:GetService("Workspace").Camera:GetDescendants()) do
+    				for i,v in pairs(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:GetDescendants()) do
     					if v.Name == 'Part' then
     						v:Destroy()
     					end
