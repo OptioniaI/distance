@@ -1,4 +1,4 @@
-    if LEGENDSPVR_LOADED and not _G.LEGENDSPVR_DEBUG == true then
+        if LEGENDSPVR_LOADED and not _G.LEGENDSPVR_DEBUG == true then
              game.StarterGui:SetCore("SendNotification", {
              Title = "Reach";
              Text = "Already Loaded!";
@@ -25,7 +25,7 @@
     local Cam = game.Workspace.Camera
     local Player = game.Players.LocalPlayer
     local Char = Player.Character
-    local Root = Char.Humanoid.RootPart
+    local Root = Char.HumanoidRootPart
 	_G.AMP = 20
     _G.Dist = 35
     _G.SphereActivated = true
@@ -93,7 +93,7 @@
     	pcall(function()
     		for i,v in pairs(game.Players:GetPlayers()) do 
     			if v ~= Player and not table.find(wl, v.Name) and not table.find(Permed, v.Name) then
-    				if v.Character.Humanoid.Health ~= 0 then 
+    				if v.Character.Humanoid.Health ~= 0 then
     					if (v.Character.HumanoidRootPart.Position - Char.HumanoidRootPart.Position).Magnitude <= _G.Dist then 
     						for _,x in pairs(v.Character:GetChildren()) do 
     							if table.find(wl, v.Name) then return end
@@ -146,7 +146,7 @@
     	function UnEquip()
     		game.Players.LocalPlayer.Character.ChildRemoved:Connect(function(int)
     			if int:FindFirstChild("Handle") then
-    				for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
+    				for i,v in pairs(game:GetService("Workspace").Camera:GetDescendants()) do
     					if v.Name == 'Part' then
     						v:Destroy()
     					end
@@ -230,10 +230,10 @@
     end)
 
     local AC = false
-    local Key = Enum.KeyCode.F
+    _G.Key = Enum.KeyCode.F
 
     game:GetService("UserInputService").InputBegan:Connect(function(k,g)
-    	if not g and k.KeyCode == Key then
+    	if not g and k.KeyCode == _G.Key then
     		AC = not AC
     	end
     end)
