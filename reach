@@ -247,3 +247,7 @@
     		end)
     	end
     end
+
+    while task.wait() do
+        Part.Color = Preview.Color
+    end
