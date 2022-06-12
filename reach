@@ -25,7 +25,7 @@
     local Cam = game.Workspace.Camera
     local Player = game.Players.LocalPlayer
     local Char = Player.Character
-	_G.AMP = 2
+	_G.AMP = 10
     _G.Dist = 35
     _G.SphereActivated = true
     setsimulationradius(math.huge,math.huge)
