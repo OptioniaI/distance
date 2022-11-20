@@ -1,249 +1,249 @@
-    if LEGENDSPVR_LOADED and not _G.LEGENDSPVR_DEBUG == true then
-            game.StarterGui:SetCore("SendNotification", {
-            Title = "Reach";
-            Text = "Already Loaded!";
-            Icon = "rbxasset://textures/loading/cancelButton.png";
-            Duration = 0.75;})
-        return
-    end
+if LEGENDSPVR_LOADED and not _G.LEGENDSPVR_DEBUG == true then
+        game.StarterGui:SetCore("SendNotification", {
+        Title = "Reach";
+        Text = "Already Loaded!";
+        Icon = "rbxasset://textures/loading/cancelButton.png";
+        Duration = 0.75;})
+    return
+end
 
-    pcall(function() getgenv().LEGENDSPVR_LOADED = true end)
+pcall(function() getgenv().LEGENDSPVR_LOADED = true end)
 
-    mt = getrawmetatable(game)
-    oldIndex = mt.__index 
-    setreadonly(mt, false)
-
-
-    mt.__index = function(a,b)
-    	if a == "Weld" or b == "Weld" then
-    		return "Part"
-    	end
-    	return oldIndex(a,b)
-    end
+mt = getrawmetatable(game)
+oldIndex = mt.__index 
+setreadonly(mt, false)
 
 
-    local Cam = game.Workspace.Camera
-    local Player = game.Players.LocalPlayer
-    local Char = Player.Character
-	_G.AMP = 10
-    _G.Dist = 35
-    _G.SphereActivated = true
-    setsimulationradius(math.huge,math.huge)
+mt.__index = function(a,b)
+	if a == "Weld" or b == "Weld" then
+		return "Part"
+	end
+	return oldIndex(a,b)
+end
 
-    local wl = {}
-    local Permed = {}
 
-    local function AddUser(plr)
-    	table.insert(wl, plr)
-    	game.StarterGui:SetCore("SendNotification", {
-    	Title = "Yujiro's Hub";
-    	Text = "Whitelisted " .. tostring(plr) .. ".";
-    	Icon = "rbxassetid://8655912773";
-    	Duration = 1;})
-    end
+local Cam = game:GetService("Workspace").Camera
+local Player = game:GetService("Players").LocalPlayer
+local Char = Player.Character
+_G.AMP = 10
+_G.Dist = 35
+_G.SphereActivated = true
+setsimulationradius(math.huge,math.huge)
 
-    local function WAddUser(plr)
-    	table.insert(Permed, plr)
-    	game.StarterGui:SetCore("SendNotification", {
-    	Title = "Yujiro's Hub";
-    	Text = "Permed " .. tostring(plr);
-    	Icon = "rbxassetid://740999769";
-    	Duration = 1;})
-    end
+local wl = {}
+local Permed = {}
 
-    local function WRemoveUser(plr)
-    	for num,user in pairs (Permed) do
-    		if user == plr then
-    			table.remove(Permed, num)
-    			game.StarterGui:SetCore("SendNotification", {
-    			Title = "Yujiro's Hub";
-    			Text = "Unpermed " .. tostring(plr);
-    			Icon = "rbxassetid://740999769";
-    			Duration = 1;})
-    		end
-    	end
-    end
+local function AddUser(plr)
+	table.insert(wl, plr)
+	game.StarterGui:SetCore("SendNotification", {
+	Title = "Yujiro's Hub";
+	Text = "Whitelisted " .. tostring(plr) .. ".";
+	Icon = "rbxassetid://8655912773";
+	Duration = 1;})
+end
 
-    local function RemoveUser(plr)
-    	for num,user in pairs (wl) do
-    		if user == plr then
-    			table.remove(wl, num)
-    			game.StarterGui:SetCore("SendNotification", {
-    			Title = "Yujiro's Hub";
-    			Text = "Blacklisted " .. tostring(plr) .. ".";
-    			Icon = "rbxassetid://8655912773";
-    			Duration = 1;})
-    		end
-    	end
-    end
+local function WAddUser(plr)
+	table.insert(Permed, plr)
+	game.StarterGui:SetCore("SendNotification", {
+	Title = "Yujiro's Hub";
+	Text = "Permed " .. tostring(plr);
+	Icon = "rbxassetid://740999769";
+	Duration = 1;})
+end
 
-    local function FindPlayer(User)
-    	for _,players in pairs(game.Players:GetPlayers()) do
-    		if players.Name ~= Player.Name then
-    			if User:lower() == (players.Name:lower()):sub(1, #User) then
-    				return players
-    			end
-    		end
-    	end
-    end
+local function WRemoveUser(plr)
+	for num,user in pairs (Permed) do
+		if user == plr then
+			table.remove(Permed, num)
+			game.StarterGui:SetCore("SendNotification", {
+			Title = "Yujiro's Hub";
+			Text = "Unpermed " .. tostring(plr);
+			Icon = "rbxassetid://740999769";
+			Duration = 1;})
+		end
+	end
+end
 
-    game:GetService("RunService").Stepped:Connect(function()
-    	local Player = game.Players.LocalPlayer
-    	local Char = Player.Character
-    	pcall(function()
-    		for i,v in pairs(game.Players:GetPlayers()) do 
-    			if v ~= Player and not table.find(wl, v.Name) and not table.find(Permed, v.Name) then
-    				if v.Character.Humanoid.Health ~= 0 then
-    					if (v.Character.HumanoidRootPart.Position - Char.HumanoidRootPart.Position).Magnitude <= _G.Dist then 
-    						for _,x in pairs(v.Character:GetChildren()) do 
-    							if table.find(wl, v.Name) then return end
-    							if x:IsA("BasePart") then 
-    								if v.Character:FindFirstChild('LLeft Aarm') then
-    									v.Character:FindFirstChild('LLeft Aarm'):Destroy()
-    								end
-    								for i = 1,_G.AMP do
-    									firetouchinterest(Char:FindFirstChildOfClass("Tool").Handle, x, 0)
-    									firetouchinterest(Char:FindFirstChildOfClass("Tool").Handle, x, 1)
-    								end
-    							end
-    						end
-    					end
-    				end
-    			end
-    		end
-    	end)
-    end)
-    --reach_config
-    if _G.SphereActivated then
-    	function Update()
-    		game.Players.LocalPlayer.Character.ChildAdded:Connect(function(tool)
-    			if tool:FindFirstChild("Handle") then
-    				Part = Instance.new("Part", Cam)
-    				Weld = Instance.new("Weld", Cam)
-                    Part.Material = Enum.Material.ForceField
-                    Part.CastShadow = false
-                    Part.Shape = "Ball"
-                    Part.Color = Color3.fromRGB(0, 0, 0)
-    				Part.Transparency = 0
-    				Part.CanCollide = false
-    				--[[Sphere = Instance.new("SelectionSphere",game:GetService("CoreGui").RobloxGui.Modules)
-    				Sphere.Transparency = 1
-    				Sphere.SurfaceColor3 = Color3.new(0,0,0)
-    				Sphere.Transparency = 1
-    				Sphere.Name = "Sphere"
-    				Sphere.SurfaceTransparency = 1
-    				Sphere.Adornee = Part]]--
-    				Part.Massless = true
-    				Part.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
-    				Weld.Part0 = Part 
-    				Weld.Part1 = game.Players.LocalPlayer.Character.HumanoidRootPart
-    				game:GetService("RunService").Stepped:Connect(function()
-    					Part.Size = Vector3.new(_G.Dist,_G.Dist,_G.Dist)
-    				end)
-    			end
-    		end)
-    	end
-    	function UnEquip()
-    		game.Players.LocalPlayer.Character.ChildRemoved:Connect(function(int)
-    			if int:FindFirstChild("Handle") then
-    				for i,v in pairs(game:GetService("Workspace").Camera:GetDescendants()) do
-    					if v.Name == 'Part' then
-    						v:Destroy()
-    					end
-    				end
-    			end
-    		end)
-    	end
-    	function UnEquipped()
-    		game.Players.LocalPlayer.Character.ChildRemoved:Connect(function(int)
-    			if int:FindFirstChild("Handle") then
-    				for i,v in pairs(game:GetService("Workspace").Camera:GetDescendants()) do
-    					if v.Name == 'Weld' then
-    						v:Destroy()
-    					end
-    				end
-    			end
-    		end)
-    	end
+local function RemoveUser(plr)
+	for num,user in pairs (wl) do
+		if user == plr then
+			table.remove(wl, num)
+			game.StarterGui:SetCore("SendNotification", {
+			Title = "Yujiro's Hub";
+			Text = "Blacklisted " .. tostring(plr) .. ".";
+			Icon = "rbxassetid://8655912773";
+			Duration = 1;})
+		end
+	end
+end
 
-    	Update()
-        UnEquipped()
-    	UnEquip()
+local function FindPlayer(User)
+	for _,players in pairs(game:GetService("Players"):GetPlayers()) do
+		if players.DisplayName ~= Player.DisplayName then
+			if User:lower() == (players.DisplayName:lower()):sub(1, #User) then
+				return players
+			end
+		end
+	end
+end
 
-    	game.Players.LocalPlayer.CharacterAdded:Connect(Update)
-        game.Players.LocalPlayer.CharacterAdded:Connect(UnEquipped)
-    	game.Players.LocalPlayer.CharacterAdded:Connect(UnEquip)
-    end
+game:GetService("RunService").Stepped:Connect(function()
+	local Player = game:GetService("Players").LocalPlayer
+	local Char = Player.Character
+	pcall(function()
+		for i,v in pairs(game:GetService("Players"):GetPlayers()) do 
+			if v ~= Player and not table.find(wl, v.DisplayName) and not table.find(Permed, v.DisplayName) then
+				if v.Character.Humanoid.Health ~= 0 then
+					if (v.Character.HumanoidRootPart.Position - Char.HumanoidRootPart.Position).Magnitude <= _G.Dist then 
+						for _,x in pairs(v.Character:GetChildren()) do 
+							if table.find(wl, v.DisplayName) then return end
+							if x:IsA("BasePart") then 
+								if v.Character:FindFirstChild('LLeft Aarm') then
+									v.Character:FindFirstChild('LLeft Aarm'):Destroy()
+								end
+								for i = 1,_G.AMP do
+									firetouchinterest(Char:FindFirstChildOfClass("Tool").Handle, x, 0)
+									firetouchinterest(Char:FindFirstChildOfClass("Tool").Handle, x, 1)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end)
+end)
+--reach_config
+if _G.SphereActivated then
+	function Update()
+		game:GetService("Players").LocalPlayer.Character.ChildAdded:Connect(function(tool)
+			if tool:FindFirstChild("Handle") then
+				Part = Instance.new("Part", Cam)
+				Weld = Instance.new("Weld", Cam)
+                Part.Material = Enum.Material.ForceField
+                Part.CastShadow = false
+                Part.Shape = "Ball"
+                Part.Color = Color3.fromRGB(0, 0, 0)
+				Part.Transparency = 0
+				Part.CanCollide = false
+				--[[Sphere = Instance.new("SelectionSphere",game:GetService("CoreGui").RobloxGui.Modules)
+				Sphere.Transparency = 1
+				Sphere.SurfaceColor3 = Color3.new(0,0,0)
+				Sphere.Transparency = 1
+				Sphere.DisplayName = "Sphere"
+				Sphere.SurfaceTransparency = 1
+				Sphere.Adornee = Part]]--
+				Part.Massless = true
+				Part.Position = game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position
+				Weld.Part0 = Part 
+				Weld.Part1 = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+				game:GetService("RunService").Stepped:Connect(function()
+					Part.Size = Vector3.new(_G.Dist,_G.Dist,_G.Dist)
+				end)
+			end
+		end)
+	end
+	function UnEquip()
+		game:GetService("Players").LocalPlayer.Character.ChildRemoved:Connect(function(int)
+			if int:FindFirstChild("Handle") then
+				for i,v in pairs(game:GetService("Workspace").Camera:GetDescendants()) do
+					if v.DisplayName == 'Part' then
+						v:Destroy()
+					end
+				end
+			end
+		end)
+	end
+	function UnEquipped()
+		game:GetService("Players").LocalPlayer.Character.ChildRemoved:Connect(function(int)
+			if int:FindFirstChild("Handle") then
+				for i,v in pairs(game:GetService("Workspace").Camera:GetDescendants()) do
+					if v.DisplayName == "Weld" then
+						v:Destroy()
+					end
+				end
+			end
+		end)
+	end
 
-    local function AddAndRemove(plr)
-    	plr.Chatted:Connect(function(Message)
-    		if plr.Name == Player.Name or table.find(Permed, plr.Name) then
-    			if Message:sub(1, 4) == ".wl " then
-    				local plr = Message:sub(5)
-    				local User = FindPlayer(plr)
-    				if User ~= nil and User.Name ~= Player.Name and User.Name ~= plr.Name and not table.find(Permed, plr.Name) then
-    					AddUser(User.Name)
-    				end
-    			elseif Message:sub(1, 4) == ".bl " then
-    				local plr = Message:sub(5)
-    				local User = FindPlayer(plr)
-    				if User ~= nil and User.Name ~= Player.Name and User.Name ~= plr.Name and not table.find(Permed, plr.Name) then
-    					RemoveUser(User.Name)
-    				end
-    			elseif Message == ".c" or Message == ".clear" then
-    				if plr.Name == Player.Name then
-    					table.clear(wl)
-    					table.clear(Permed)
-    						game.StarterGui:SetCore("SendNotification", {
-    						Title = "Yujiro's Hub";
-    						Text = "Cleared whitelist!";
-    						Icon = "rbxassetid://5712067572";
-    						Duration = 1;})
-    				end
-    			elseif Message:sub(1, 3) == ".p " then
-    				if plr.Name == Player.Name then
-    					local plr = Message:sub(4)
-    					local User = FindPlayer(plr)
-    					if User ~= nil and User.Name ~= Player.Name then
-    						WAddUser(User.Name)
-    					end
-    				end
-    			elseif Message:sub(1, 5) == ".unp " then
-    				if plr.Name == Player.Name then
-    				local plr = Message:sub(6)
-    				local User = FindPlayer(plr)
-    				if User ~= nil and User.Name ~= Player.Name then
-    					WRemoveUser(User.Name)
-    					end
-    				end
-    			end
-    		end
-    	end)
-    end
+	Update()
+    UnEquipped()
+	UnEquip()
 
-    for _,p in pairs (game.Players:GetPlayers()) do
-    	AddAndRemove(p)
-    end
+	game:GetService("Players").LocalPlayer.CharacterAdded:Connect(Update)
+    game:GetService("Players").LocalPlayer.CharacterAdded:Connect(UnEquipped)
+	game:GetService("Players").LocalPlayer.CharacterAdded:Connect(UnEquip)
+end
 
-    game.Players.PlayerAdded:Connect(function(plr)
-    	AddAndRemove(plr)
-    end)
+local function AddAndRemove(plr)
+	plr.Chatted:Connect(function(Message)
+		if plr.DisplayName == Player.DisplayName or table.find(Permed, plr.DisplayName) then
+			if Message:sub(1, 4) == ".wl " then
+				local plr = Message:sub(5)
+				local User = FindPlayer(plr)
+				if User ~= nil and User.DisplayName ~= Player.DisplayName and User.DisplayName ~= plr.DisplayName and not table.find(Permed, plr.DisplayName) then
+					AddUser(User.DisplayName)
+				end
+			elseif Message:sub(1, 4) == ".bl " then
+				local plr = Message:sub(5)
+				local User = FindPlayer(plr)
+				if User ~= nil and User.DisplayName ~= Player.DisplayName and User.DisplayName ~= plr.DisplayName and not table.find(Permed, plr.DisplayName) then
+					RemoveUser(User.DisplayName)
+				end
+			elseif Message == ".c" or Message == ".clear" then
+				if plr.DisplayName == Player.DisplayName then
+					table.clear(wl)
+					table.clear(Permed)
+						game.StarterGui:SetCore("SendNotification", {
+						Title = "Yujiro's Hub";
+						Text = "Cleared whitelist!";
+						Icon = "rbxassetid://5712067572";
+						Duration = 1;})
+				end
+			elseif Message:sub(1, 3) == ".p " then
+				if plr.DisplayName == Player.DisplayName then
+					local plr = Message:sub(4)
+					local User = FindPlayer(plr)
+					if User ~= nil and User.DisplayName ~= Player.DisplayName then
+						WAddUser(User.DisplayName)
+					end
+				end
+			elseif Message:sub(1, 5) == ".unp " then
+				if plr.DisplayName == Player.DisplayName then
+				local plr = Message:sub(6)
+				local User = FindPlayer(plr)
+				if User ~= nil and User.DisplayName ~= Player.DisplayName then
+					WRemoveUser(User.DisplayName)
+					end
+				end
+			end
+		end
+	end)
+end
 
-    local AC = false
-    _G.Key = Enum.KeyCode.F
+for _,p in pairs (game:GetService("Players"):GetPlayers()) do
+	AddAndRemove(p)
+end
 
-    game:GetService("UserInputService").InputBegan:Connect(function(k,g)
-    	if not g and k.KeyCode == _G.Key then
-    		AC = not AC
-    	end
-    end)
+game:GetService("Players").PlayerAdded:Connect(function(plr)
+	AddAndRemove(plr)
+end)
 
-    while wait() do
-    	if AC then
-    		pcall(function()
-    			local Sword = game:GetService'Players'.LocalPlayer.Character:FindFirstChildOfClass'Tool'
-    			Sword:Activate()
-    			Sword:Activate()
-    		end)
-    	end
-    end
+_G.ToolAC = false
+_G.KeyBindForReach = Enum.KeyCode.F
+
+game:GetService("UserInputService").InputBegan:Connect(function(k,g)
+	if not g and k.KeyCode == _G.KeyBindForReach then
+		_G.ToolAC = not _G.ToolAC
+	end
+end)
+
+while wait() do
+	if _G.ToolAC then
+		pcall(function()
+			local Sword = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+			Sword:Activate()
+			Sword:Activate()
+		end)
+	end
+end
